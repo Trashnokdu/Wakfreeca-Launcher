@@ -1,0 +1,133 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded");
+
+*{
+  font-weight: 500;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+button{
+  padding-inline: 0px;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal_2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal_2.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-button{
+  text-align: left;
+  width: 100%;
+  height: 25%;
+  border-radius: 16px;
+  border: none;
+  background-color: white;
+  margin-bottom: 8px
+}
+
+input {font-size: 0.875rem !important;}
+input:focus {outline:none;}
+
+.modal-bottom-button{
+  text-align: center;
+  width: 100%;
+  height: 25%;
+  border-radius: 16px;
+  border: none;
+  background-color: white;
+  margin-bottom: 8px
+}
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+.react-colorful {
+  width: 100% !important;
+  height: 54.24% !important;
+}
+.react-colorful__saturation{
+  border-radius: 16px 16px 0px 0px !important;
+}
+.react-colorful__last-control{
+  border-radius: 0px 0px 16px 16px !important;
+}
+
+.modal-content {
+  background: #F2F2F7;
+  padding: 16px;
+  border-radius: 32px 32px 0px 0px; /* 수정된 부분 */
+  position: fixed;
+  height: 32vh;
+  bottom: 0;
+  box-sizing: border-box;
+  width: 100vw;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+  transform: translateY(0);
+}
+.modal_2.active .modal-content {
+  transform: translateY(0);
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.button-container > button {
+  height: 40px;
+  width: 40px;
+}
+
+@media screen and (max-width: 360px) {
+  .button-container {
+    justify-content: space-around;
+  }
+}
+
+
+:root{
+  background-color: #F2F2F7;
+}
