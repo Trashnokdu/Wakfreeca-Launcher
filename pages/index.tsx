@@ -1,5 +1,9 @@
+'use client'
 import { useEffect, useRef, useState } from "react"
 import { HexColorPicker } from 'react-colorful';
+import axios from 'axios';
+import Google from "next-auth/providers/google";
+import { SessionProvider, signIn, useSession } from "next-auth/react";
 
 function getTextColor(hexColor: any){
   const c = hexColor.substring(1)
@@ -13,6 +17,7 @@ function getTextColor(hexColor: any){
   return result
 }
 
+// 다녀오세용 코드좀 읽어보고 있을게요
 function newbrowser(){
   fetch("/api/new")
     .then((response) => response.json())
@@ -20,13 +25,17 @@ function newbrowser(){
 }
 
 export default function Home() {
+  const [Login, setLogin] = useState(false)
   const [textColor, setTextcolor] = useState("#000000")
   const [id, setId] = useState("")
   const [color, setColor] = useState("#164532")
   const [oldColor, setOldColor] = useState("#164532")
   const [showModal, setShowModal] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const [showColorpicker, setShowColorpicker] = useState(false)
-
+  const [isSetting, setIsSetting] = useState(false)
+  const { data: session, status } = useSession();
+  
   const onChange = (event: any) => {
     setId(event.target.value);
   }
@@ -45,16 +54,41 @@ export default function Home() {
     setTextcolor(getTextColor(color))
   }, [color])
   useEffect(() => {
-      const item = localStorage.getItem('key')
-      if(!item){
-        newbrowser()
+    if(status != "loading"){
+        const item: any = window.localStorage.getItem('isLoggedIn')
+        if(!item){
+          const addItem = () => window.localStorage.setItem('isLoggedIn', 'false');
+          addItem();
+          setLogin(false)
+          console.info('[LoginCheck]addSuccess')
+        } else if(item === 'false'){
+          if(session){
+            setLogin(true)
+            return window.localStorage.setItem('isLoggedIn', 'true');
+          }
+          setLogin(false)
+          return console.log("you need login to google.")
+        }
+        else{
+          if(!session){
+            setLogin(false)
+            return window.localStorage.setItem('isLoggedIn', 'false');
+          }
+          setLogin(true)
+        }
       }
-    }, [])
+    }, [status])
+    if(status == "loading"){
+      return (
+        <>
+        </>      
+      ); 
+    }
   return (
     <main>
       <header className="container" style={{height: "7.917vh", backgroundColor: "white"}}>
         <span style={{marginLeft:"4.444444444444445%", fontSize: '0.75rem', fontWeight: '700'}}><p style={{margin: 0, fontWeight: '700'}}>WAKFREECA</p>LAUNCHER</span>
-        <button style={{marginLeft: "auto", marginRight: "4.444444444444445%", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => setShowModal(true)}>settings</button>
+        <button style={{marginLeft: "auto", marginRight: "4.444444444444445%", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {Login? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)}}>{isSetting? "check_circle": "settings"}</button>
       </header>
 
       {/* 추가 모달 */}
@@ -93,6 +127,26 @@ export default function Home() {
         </div>
         </div>
       </div>
+      {/* 로그인 모달 */}
+      <div className={showLoginModal ? 'modal_3 active' : 'modal_3'} onClick={() => {setShowLoginModal(false)}}>
+        <div className="modal-content" onClick={e => e.stopPropagation()} style={{justifyContent: 'space-between', alignItems: 'center', textAlign: "center"}}>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <span style={{fontSize: "0.875rem", paddingTop: "24px"}}>Google로 로그인해서 설정을 저장하세요</span>
+          </div>
+            <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none", marginTop: "27px"}} onClick={() => signIn('google')}>
+                <img style={{marginLeft:"4.444444444444445%"}} src="google.svg" alt="" />
+                <span style={{marginLeft: "auto", marginRight: "20px"}}>Google로 로그인</span>
+            </button>
+          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
+          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
+        </div>
+      </div>
     </main>
   )
 }
+  
+/*
+  킹아
+*/
+/** 이제 페이지 번역 안뜰거빈다 어 global.css좀 손보고 올게요
+*/
