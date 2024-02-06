@@ -17,19 +17,23 @@ function getTextColor(hexColor: any){
   return result
 }
 
-// 다녀오세용 코드좀 읽어보고 있을게요
-function newbrowser(){
-  fetch("/api/new")
-    .then((response) => response.json())
-    .then((data) => console.log(data))
+function getchData(setChData: any){
+  axios({
+    method: "get",
+    url: "/api/data/get",
+  })
+  .then((response) => setChData(response.data))
+  .catch((error) => console.log(error))
 }
 
 export default function Home() {
   const [Login, setLogin] = useState(false)
   const [textColor, setTextcolor] = useState("#000000")
   const [id, setId] = useState("")
+  const [isLoding, setIsLoding] = useState(true)
   const [color, setColor] = useState("#164532")
   const [oldColor, setOldColor] = useState("#164532")
+  const [chData, setChData] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showColorpicker, setShowColorpicker] = useState(false)
@@ -49,7 +53,9 @@ export default function Home() {
     }
     setColor(newValue);
   };
-  
+  useEffect(() => {
+    console.log(isLoding)
+  }, [isLoding])
   useEffect(() => {
     setTextcolor(getTextColor(color))
   }, [color])
@@ -60,13 +66,24 @@ export default function Home() {
           const addItem = () => window.localStorage.setItem('isLoggedIn', 'false');
           addItem();
           setLogin(false)
+          setIsLoding(false)
           console.info('[LoginCheck]addSuccess')
         } else if(item === 'false'){
           if(session){
-            setLogin(true)
-            return window.localStorage.setItem('isLoggedIn', 'true');
+            axios({
+              method: "get",
+              url: "/api/auth/check"
+            })
+            .then(() => {
+              setLogin(true); 
+              window.localStorage.setItem('isLoggedIn', 'true');
+              getchData(setChData);
+              setIsLoding(false);
+            })
+            .catch(() => {setLogin(false); window.localStorage.setItem('isLoggedIn', 'false'); setIsLoding(false);})            
           }
           setLogin(false)
+          setIsLoding(false)
           return console.log("you need login to google.")
         }
         else{
@@ -74,13 +91,24 @@ export default function Home() {
             setLogin(false)
             return window.localStorage.setItem('isLoggedIn', 'false');
           }
-          setLogin(true)
+          axios({
+            method: "get",
+            url: "/api/auth/check"
+          })
+          .then(() => {
+            setLogin(true); 
+            window.localStorage.setItem('isLoggedIn', 'true');
+            getchData(setChData);
+            setIsLoding(false);
+          })
+          .catch(() => {setLogin(false); window.localStorage.setItem('isLoggedIn', 'false'); setIsLoding(false);})
         }
       }
     }, [status])
-    if(status == "loading"){
+    if(isLoding){
       return (
         <>
+        Loading...
         </>      
       ); 
     }
