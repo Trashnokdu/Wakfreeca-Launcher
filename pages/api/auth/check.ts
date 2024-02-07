@@ -21,5 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         catch{
             res.status(401).send("401 Unauthorized")
         }
-    } 
+    }
+    else{
+        res.status(405).send("405 Method Not Allowed")
+    }
 }
