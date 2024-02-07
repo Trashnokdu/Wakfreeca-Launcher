@@ -11,7 +11,7 @@ const pool = mysql.createPool({
     database : "wakfreeca"
 })
 
-type ListItem = [number, string];
+type ListItem = [number, string, string];
 
 function isValidList(list: ListItem[]): boolean {
     for (let i = 0; i < list.length; i++) {
@@ -19,7 +19,7 @@ function isValidList(list: ListItem[]): boolean {
         if (item[0] !== i) {
             return false;
         }
-        if (typeof item[1] !== 'string') {
+        if (typeof item[1] !== 'string' || typeof item[2] !== 'string' || !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i.test(item[2])) {
             return false;
         }
     }

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { HexColorPicker } from 'react-colorful';
 import axios from 'axios';
 import Google from "next-auth/providers/google";
+import ListView from "./components/ListView";
 import { SessionProvider, signIn, useSession } from "next-auth/react";
 
 function getTextColor(hexColor: any){
@@ -18,7 +19,7 @@ function getTextColor(hexColor: any){
 }
 
 function getchData(setChData: any){
-  axios({
+  return axios({
     method: "get",
     url: "/api/data/get",
   })
@@ -33,7 +34,8 @@ export default function Home() {
   const [isLoding, setIsLoding] = useState(true)
   const [color, setColor] = useState("#164532")
   const [oldColor, setOldColor] = useState("#164532")
-  const [chData, setChData] = useState([])
+  const [chData, setChData] = useState([{"sequence": 0,"id": "ecvhao","name": "우왁굳","color": "#164532"}, {"sequence": 1,"id": "inehine","name": "아이네♪","color": "#8A2BE2"}, {"sequence": 2,"id": "jingburger1","name": "징버거☆","color": "#F0A957"}, {"sequence": 3,"id": "lilpa0309","name": "릴파♥","color": "#443965"}, {"sequence": 4,"id": "cotton1217","name": "주르르_","color": "#FF008C"}, {"sequence": 5,"id": "gosegu2","name": "고세구!","color": "#467EC6"}, {"sequence": 6,"id": "viichan6","name": "_비챤","color": "#95C100"}
+])
   const [showModal, setShowModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showColorpicker, setShowColorpicker] = useState(false)
@@ -54,9 +56,6 @@ export default function Home() {
     setColor(newValue);
   };
   useEffect(() => {
-    console.log(isLoding)
-  }, [isLoding])
-  useEffect(() => {
     setTextcolor(getTextColor(color))
   }, [color])
   useEffect(() => {
@@ -74,10 +73,10 @@ export default function Home() {
               method: "get",
               url: "/api/auth/check"
             })
-            .then(() => {
+            .then(async () => {
               setLogin(true); 
               window.localStorage.setItem('isLoggedIn', 'true');
-              getchData(setChData);
+              await getchData(setChData);
               setIsLoding(false);
             })
             .catch(() => {setLogin(false); window.localStorage.setItem('isLoggedIn', 'false'); setIsLoding(false);})            
@@ -95,10 +94,10 @@ export default function Home() {
             method: "get",
             url: "/api/auth/check"
           })
-          .then(() => {
+          .then(async () => {
             setLogin(true); 
             window.localStorage.setItem('isLoggedIn', 'true');
-            getchData(setChData);
+            await getchData(setChData);
             setIsLoding(false);
           })
           .catch(() => {setLogin(false); window.localStorage.setItem('isLoggedIn', 'false'); setIsLoding(false);})
@@ -108,16 +107,26 @@ export default function Home() {
     if(isLoding){
       return (
         <>
-        Loading...
+        <div style={{width: "100vw", height: "100svh", backgroundColor: "#1C1C1E"}}>
+          <div className="autotextcolor" style={{fontSize: "2.25rem", fontWeight: "bold", display: "flex", alignItems: "center", height: "100svh",  marginLeft: "16px"}}>WAKFREECA<br />LAUNCHER</div>
+        </div>
         </>      
       ); 
     }
   return (
-    <main>
-      <header className="container" style={{height: "7.917vh", backgroundColor: "white"}}>
+    <>
+      <header className="container Top autotextcolor">
         <span style={{marginLeft:"4.444444444444445%", fontSize: '0.75rem', fontWeight: '700'}}><p style={{margin: 0, fontWeight: '700'}}>WAKFREECA</p>LAUNCHER</span>
         <button style={{marginLeft: "auto", marginRight: "4.444444444444445%", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {Login? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)}}>{isSetting? "check_circle": "settings"}</button>
       </header>
+      <main style={{margin: "1rem"}}>
+        <ListView chData={chData}></ListView>
+      </main>
+
+
+
+
+      {/* 이하 모달 모음 */}
 
       {/* 추가 모달 */}
       <div className={showModal ? 'modal active' : 'modal'} onClick={() => setShowModal(false)}>
@@ -127,10 +136,10 @@ export default function Home() {
             <span style={{marginLeft: "auto", marginRight: "16px", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded" onClick={() => setId("")}>cancel</span>
           </div>
           <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none"}} onClick={() => {setOldColor(color); setShowColorpicker(true);}}>
-            <span style={{marginLeft:"4.444444444444445%"}}>{color}</span>
-            <span style={{marginLeft: "auto", marginRight: "16px", background: "none", outline: "2px solid #F2F2F7", backgroundColor: color, width: "24px", height: "24px", borderRadius: "32px"}}></span>
+            <span style={{marginLeft:"4.444444444444445%"}} className="autotextcolor">{color}</span>
+            <span style={{marginLeft: "auto", marginRight: "16px", background: "none", backgroundColor: color, width: "24px", height: "24px", borderRadius: "32px"}} className="autooutlinecolor"></span>
           </button>
-          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left", color: "#000000"}}>취소</button>
+          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left"}}>취소</button>
           <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor}}>저장</button>
         </div>
       </div>
@@ -148,9 +157,9 @@ export default function Home() {
           <button style={{backgroundColor: '#467EC6', color: textColor, border: "2px solid #FFFFFF", borderRadius: "24px"}} onClick={() => {setColor('#467EC6')}}></button>
           <button style={{backgroundColor: '#95C100', color: textColor, border: "2px solid #FFFFFF", borderRadius: "24px"}} onClick={() => {setColor('#95C100')}}></button>
         </div>
-        <div className="modal-button container" style={{fontSize: "0.875rem", height: "11.865%", marginTop: "8px"}}><input style={{paddingLeft:"4.444444444444445%", width: "100%", height: "100%", border: "none", background: "none", paddingTop: "0px", paddingBottom: "0px"}} value={color} onChange={handleChange}></input></div>
+        <div className="modal-button container" style={{fontSize: "0.875rem", height: "11.865%", marginTop: "8px"}}><input style={{paddingLeft:"4.444444444444445%", width: "100%", height: "100%", border: "none", background: "none", paddingTop: "0px", paddingBottom: "0px"}} className="autotextcolor" value={color} onChange={handleChange}></input></div>
         <div style={{ width: '100%', height: "100%", display: 'flex', justifyContent: 'space-between'}}>
-            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '10.17%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setColor(oldColor); setShowColorpicker(false)}}>취소</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '10.17%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setColor(oldColor); setShowColorpicker(false)}}>취소</button>
             <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '10.17%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}} onClick={() => setShowColorpicker(false)}>저장</button>
         </div>
         </div>
@@ -159,17 +168,17 @@ export default function Home() {
       <div className={showLoginModal ? 'modal_3 active' : 'modal_3'} onClick={() => {setShowLoginModal(false)}}>
         <div className="modal-content" onClick={e => e.stopPropagation()} style={{justifyContent: 'space-between', alignItems: 'center', textAlign: "center"}}>
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            <span style={{fontSize: "0.875rem", paddingTop: "24px"}}>Google로 로그인해서 설정을 저장하세요</span>
+            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>Google로 로그인해서 설정을 저장하세요</span>
           </div>
             <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none", marginTop: "27px"}} onClick={() => signIn('google')}>
                 <img style={{marginLeft:"4.444444444444445%"}} src="google.svg" alt="" />
-                <span style={{marginLeft: "auto", marginRight: "20px"}}>Google로 로그인</span>
+                <span className="autotextcolor" style={{marginLeft: "auto", marginRight: "20px"}}>Google로 로그인</span>
             </button>
-          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
+          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
           <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
         </div>
       </div>
-    </main>
+    </>
   )
 }
   
