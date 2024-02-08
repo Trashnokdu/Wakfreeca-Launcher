@@ -38,8 +38,26 @@ const getFollow = async (id: string) => {
   })
   return (response.data.station.upd.fan_cnt / 10000).toFixed(1) + '만';
 }
+const getUser = async (id: string) => {
+  try{
+    const response = await axios({
+        url: `https://bjapi.afreecatv.com/api/${id}/station`,
+    })
+    return (response.data.station.user_nick)
+  } catch (error: any){
+    if(error.response.status == 515){
+      alert("존재하지않는 방송국 ID입니다")
+      return false
+    }
+    else{
+      alert("알수없는 오류가 발생하였습니다.")
+      return false
+    }
+  }
+}
 export default function Home() {
   const [Login, setLogin] = useState(false)
+  const [isdataediting, setIsdataediting] = useState(false)
   const [isediting, setIsediting] = useState(false)
   const [textColor, setTextcolor] = useState("#000000")
   const [id, setId] = useState("")
@@ -56,10 +74,47 @@ export default function Home() {
   const ThemeContext = createContext("null");
   const [setTheme, theme] = useState("light")
   const [follows, setFollows] = useState<any>({});
-
+  function save(){
+    if (isdataediting){
+      setChData(prevData => prevData.map(item => item.id === id ? {...item, color: color} : item));
+      setShowModal(false)
+      setTimeout(() => {
+        setId("")
+        setColor("#164532")
+      }, 300)
+    }
+    else{
+      getUser(id)
+      .then(stationName => {
+        if(!stationName){
+          return
+        }
+        else{
+          console.log({"sequence": chData[chData.length - 1].sequence + 1, "id": id, "name": stationName, "color": color})
+          setChData([...chData, {"sequence": chData[chData.length - 1].sequence + 1, "id": id, "name": stationName, "color": color}])
+          setShowModal(false)
+          setTimeout(() => {
+            setId("")
+            setColor("#164532")
+          }, 300)
+        }
+      })  
+    }
+  }
   useEffect(() => {
     if(isediting && !isSetting){
         console.log("edit end")
+        const fetchFollows = async () => {
+          const newFollows: any = {};
+
+          for (const item of chData) {
+              const follow = await getFollow(item.id);
+              newFollows[item.id] = follow;
+          }
+
+          setFollows(newFollows);
+      };
+      fetchFollows();
         axios({method: "post", url: "/api/data/edit", data: sortedChData})
         .then((response) => setChData(response.data))
         return setIsediting(false)
@@ -70,6 +125,7 @@ export default function Home() {
     }
 }, [isSetting])
   useEffect(() => {
+    if(!isediting){
       const fetchFollows = async () => {
           const newFollows: any = {};
 
@@ -82,6 +138,7 @@ export default function Home() {
       };
 
       fetchFollows();
+    }
   }, [sortedChData]);
   const onChange = (event: any) => {
     setId(event.target.value);
@@ -147,6 +204,7 @@ export default function Home() {
     }, [status])
     useEffect(()=>{
       sortedChData = chData.sort((a: data_type, b: data_type) => a.sequence - b.sequence);
+      console.log(sortedChData)
     }, [chData])
     if(isLoding){
       return (
@@ -158,13 +216,13 @@ export default function Home() {
       ); 
     }
   return (
-    <ThemeContext.Provider>
+    <div>
       <header className="container Top autotextcolor">
         <span style={{marginLeft:"4.444444444444445%", fontSize: '0.75rem', fontWeight: '700'}}><p style={{margin: 0, fontWeight: '700'}}>WAKFREECA</p>LAUNCHER</span>
-        <button style={{marginLeft: "auto", marginRight: "4.444444444444445%", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {isSetting? setIsSetting(false) : setIsSetting(true)}}>{isSetting? "check_circle": "settings"}</button>
+        <button style={{marginLeft: "auto", marginRight: "4.444444444444445%", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {Login ? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)}}>{isSetting? "check_circle": "settings"}</button>
       </header>
       <main style={{margin: "1rem"}}>
-        <ListView chData={chData} isSetting={isSetting} setIsediting={setIsediting} setChData={setChData} isediting={isediting} setShowModal={setShowModal} sortedChData={sortedChData} follows={follows}></ListView>
+        <ListView chData={chData} isSetting={isSetting} setIsediting={setIsediting} setChData={setChData} isediting={isediting} setShowModal={setShowModal} sortedChData={sortedChData} follows={follows} setIsdataediting={setIsdataediting} setColor={setColor} setId={setId}></ListView>
       </main>
 
 
@@ -176,15 +234,15 @@ export default function Home() {
       <div className={showModal ? 'modal active' : 'modal'} onClick={() => setShowModal(false)}>
         <div className="modal-content" onClick={e => e.stopPropagation()}>
           <div className="modal-button container" style={{fontSize: "0.875rem"}}>
-            <input placeholder="아이디" style={{ height: "100%", background: "none", border: "none", paddingLeft:"4.444444444444445%"}} value={id} onChange={onChange}></input>
+            <input className={isdataediting? "" : "autotextcolor"} placeholder="아이디" style={{ height: "100%", background: "none", border: "none", paddingLeft:"4.444444444444445%"}} disabled={isdataediting} value={id} onChange={onChange} />
             <span style={{marginLeft: "auto", marginRight: "16px", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded" onClick={() => setId("")}>cancel</span>
           </div>
           <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none"}} onClick={() => {setOldColor(color); setShowColorpicker(true);}}>
             <span style={{marginLeft:"4.444444444444445%"}} className="autotextcolor">{color}</span>
             <span style={{marginLeft: "auto", marginRight: "16px", background: "none", backgroundColor: color, width: "24px", height: "24px", borderRadius: "32px"}} className="autooutlinecolor"></span>
           </button>
-          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left"}}>취소</button>
-          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor}}>저장</button>
+          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left"}} onClick={() => {setShowModal(false); setTimeout(() => {setId(""); setColor("#164532"); setIsdataediting(false)}, 300)}}>취소</button>
+          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor}} onClick={save}>저장</button>
         </div>
       </div>
 
@@ -222,7 +280,7 @@ export default function Home() {
           <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
         </div>
       </div>
-    </ThemeContext.Provider>
+    </div>
   )
 }
   

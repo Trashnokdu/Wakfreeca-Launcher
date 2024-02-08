@@ -12,10 +12,10 @@ interface data_type {
   }
 function openchnnel(id: string){
     if (/Mobi/i.test(window.navigator.userAgent)) {
-        location.href = `https://bj.afreecatv.com/${id}`
+      location.href = `https://bj.afreecatv.com/${id}`
     }
     else{
-        location.href = `https://bj.afreecatv.com/${id}`
+      window.open(`https://bj.afreecatv.com/${id}`, "_blank") 
     }
 }
 function openlive(id: string){
@@ -23,7 +23,7 @@ function openlive(id: string){
         location.href = `afreeca://player/live?user_id=${id}`
     }
     else{
-        location.href = `https://play.afreecatv.com/${id}`
+        window.open(`https://play.afreecatv.com/${id}`, "_blank")
     }
 }
 
@@ -50,7 +50,6 @@ const onDragEnd = (result:any, columns:any, setColumns:any) => {
   };
   
 const ListView = (props: any) => {
-    console.log(props)
     const [columns, setColumns] = useState({
         ['items']: {
           name: 'Items',
@@ -58,9 +57,17 @@ const ListView = (props: any) => {
         }
       });
     useEffect(() => {
+      setColumns({        
+        ['items']: {
+        name: 'Items',
+        items: props.sortedChData
+      }})
+    }, [props.sortedChData])
+    useEffect(() => {
         for (let i = 0; i < columns.items.items.length; i++) {
             columns.items.items[i].sequence = i;
           }
+        props.setChData(columns.items.items)
     }, [columns])
     if(props.isSetting) return(
         <DragDropContext
@@ -83,7 +90,7 @@ const ListView = (props: any) => {
                                         <span style={{color: item.color, fontSize: "0.875rem"}}>{item.name}</span> <span style={{color: "#999999", fontSize: "0.875rem"}}>({item.id})</span><br/>
                                     </div>
                                     <div style={{display: "flex"}}>
-                                      <button className='material-symbols-rounded' style={{alignSelf: 'center', border: "none", background: "none", color: item.color, marginRight: "1.25rem", fontSize: "1.25rem"}} onClick={() => openlive(item.id)}>edit</button>
+                                      <button className='material-symbols-rounded' style={{alignSelf: 'center', border: "none", background: "none", color: item.color, marginRight: "1.25rem", fontSize: "1.25rem"}} onClick={() => {props.setIsdataediting(true); props.setColor(item.color); props.setId(item.id); props.setShowModal(true)}}>edit</button>
                                       <button className='material-symbols-rounded' style={{alignSelf: 'center', border: "none", background: "none", color: item.color, marginRight: "0.625rem", fontSize: "1.25rem"}} onClick={() => {props.setChData(props.chData.filter((itemin:any) => itemin.id !== item.id));}}>delete_forever</button>
                                     </div>
                                 </div>
