@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method == "GET"){
         const session = await getToken({ req, secret, raw: true });
         if(!session){
-            res.status(401).send("401 Unauthorized")
+            res.status(401).send("401 Unauthorized123")
         }
         try{
             const decoded = await decode({
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.send("")
         }
         catch{
-            res.status(401).send("401 Unauthorized")
+            res.status(401).send("401 Unauthorized567")
         }
     }
     else{
