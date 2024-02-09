@@ -99,6 +99,9 @@ export default function Home() {
     }, 300)
   }
   function save(){
+    if (!id){
+      return
+    }
     if (isdataediting){
       setChData(prevData => prevData.map(item => item.id === id ? {...item, color: color} : item));
       setShowModal(false)
@@ -141,7 +144,8 @@ export default function Home() {
           setFollows(newFollows);
       };
       fetchFollows();
-        axios({method: "post", url: "/api/data/edit", data: sortedChData})
+        const data = {"data": sortedChData, "email": session?.user?.email}
+        axios({method: "post", url: "/api/data/edit", data: data})
         .then((response) => setChData(response.data))
         return setIsediting(false)
     }
