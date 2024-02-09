@@ -18,8 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             res.send("")
         }
-        catch{
-            res.status(401).send("401 Unauthorized567")
+        catch (error){
+            res.status(401).send(error)
         }
     }
     else{
