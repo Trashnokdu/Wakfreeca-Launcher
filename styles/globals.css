@@ -95,7 +95,9 @@ input {font-size: 0.875rem !important;}
 input:focus {outline:none;}
 
 .Top{
-  height: 7.917vh;
+  position: sticky;
+  top: 0;
+  height: 56px;
   background-color: white;
 }
 
@@ -182,10 +184,16 @@ input:focus {outline:none;}
 .autooutlinecolor{
   outline: 2px solid #F2F2F7;
 }
+.sp-col{
+  background-color: #fff;
+}
 :root{
   background-color: #F2F2F7;
 }
 @media (prefers-color-scheme: dark) {
+  .sp-col{
+    background-color: #1C1C1E;
+  }
   .autooutlinecolor{
     outline: 2px solid #000000;
   }
@@ -202,7 +210,6 @@ input:focus {outline:none;}
     color: white;
   }
   .Top{
-    height: 7.917vh;
     background-color: #1C1C1E;
   }
   .list_con{

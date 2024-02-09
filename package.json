@@ -16,6 +16,7 @@
     "axios": "^1.6.7",
     "dotenv": "^16.3.1",
     "jsonwebtoken": "^9.0.2",
+    "mobile-detect": "^1.4.5",
     "mongoose": "^8.0.3",
     "mysql": "^2.18.1",
     "next": "14.0.4",
