@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next'
 const mysql = require("mysql")
 import { getToken, decode } from "next-auth/jwt";
+import { getSession } from 'next-auth/react';
 require('dotenv').config();
 const secret = process.env.Secret;
 const pool = mysql.createPool({
@@ -44,16 +45,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 console.error('Error connecting: ' + err.stack);
                 return res.status(500).send("500 Internal Server Error");
             }
-            const session = await getToken({ req, secret, raw: true });
+            const session = await getSession({ req })
             if(!session){
                 res.status(401).send("401 Unauthorized")
             }
             try{
-                const decoded = await decode({
-                    token: session,
-                    secret: secret ? secret : '',
-                  });
-                email = decoded?.email
+                email = session?.user?.email
                 if(!email){
                     return res.status(500).send("500 Internal Server Error")
                 }
