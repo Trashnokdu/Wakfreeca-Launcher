@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getToken, decode } from "next-auth/jwt";
+import { decode } from "next-auth/jwt";
+import { getSession } from 'next-auth/react';
 require('dotenv').config();
 const secret = process.env.Secret;
 
@@ -7,19 +8,12 @@ const secret = process.env.Secret;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // GET POST PUT DELETE UPDATE   
     if (req.method == "GET"){
-        const session = await getToken({ req, secret, raw: true });
+        const session = await getSession({ req })
         if(!session){
             res.status(401).send("401 Unauthorized123")
         }
-        try{
-            const decoded = await decode({
-                token: session,
-                secret: secret ? secret : '',
-            });
+        else{
             res.send("")
-        }
-        catch (error){
-            res.status(401).send(error)
         }
     }
     else{
