@@ -119,7 +119,7 @@ const ListView = (props: any) => {
     )
     return (
         <div style={{fontSize: "0.875rem"}}>
-            {props.sortedChData.map((item: data_type) => (
+            {props.sortedChData && props.sortedChData.map((item: data_type) => (
               <div className='list_con' key={item.sequence} onClick={() => openlive(item.id)}>
                 <div style={{display: "flex",}} >
                     <img src={`https://profile.img.afreecatv.com/LOGO/${item.id.substring(0,2)}/${item.id}/${item.id}.jpg`} alt="" style={{width: "40px", borderRadius: "8px", marginRight: "0.5rem"}} />
