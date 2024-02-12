@@ -1,7 +1,6 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next'
 const mysql = require("mysql")
-import { getToken, decode } from "next-auth/jwt";
 require('dotenv').config();
 const secret = process.env.Secret;
 const pool = mysql.createPool({
@@ -34,7 +33,7 @@ function isValidList(list: ListItem[]): boolean {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method == "POST"){
-        const data = req.body
+        const data = req.body.data
         if(!data){
             return res.status(400).send("400 Bad Request")
         }
@@ -44,16 +43,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 console.error('Error connecting: ' + err.stack);
                 return res.status(500).send("500 Internal Server Error");
             }
-            const session = await getToken({ req, secret, raw: true });
-            if(!session){
-                res.status(401).send("401 Unauthorized")
-            }
             try{
-                const decoded = await decode({
-                    token: session,
-                    secret: secret ? secret : '',
-                  });
-                email = decoded?.email
+                email = req.body.email
                 if(!email){
                     return res.status(500).send("500 Internal Server Error")
                 }

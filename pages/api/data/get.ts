@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 const mysql = require("mysql")
 import { getToken, decode } from "next-auth/jwt";
+import { getSession } from 'next-auth/react';
 require('dotenv').config();
 const secret = process.env.Secret;
 const pool = mysql.createPool({
@@ -20,16 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 console.error('Error connecting: ' + err.stack);
                 return res.status(500).send("500 Internal Server Error");
             }
-            const session = await getToken({ req, secret, raw: true });
+            const session = await getSession({ req })
             if(!session){
                 res.status(401).send("401 Unauthorized")
             }
             try{
-                const decoded = await decode({
-                    token: session,
-                    secret: secret ? secret : '',
-                  });
-                const email = decoded?.email
+                const email = session?.user?.email
                 if(!email){
                     return res.status(500).send("500 Internal Server Error")
                 }
@@ -44,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 console.log(error);
                             }
                         });
-                        const default_data = [[0, "ecvhao", "우왁굳", "#164532"], [1, "inehine", "아이네♪", "#8A2BE2"], [2, "jingburger1", "징버거☆", "#F0A957"], [3, "lilpa0309", "릴파♥", "#443965"], [4, "cotton1217", "주르르_", "#FF008C"], [5, "gosegu2", "고세구!", "#467EC6"], [6, "viichan6", "_비챤", "#95C100"]];
+                        const default_data = [[0, "ecvhao", "우왁굳", "#164532"], [1, "inehine", "아이네♪", "#8A2BE2"], [2, "jingburger1", "징버거☆", "#F0A957"], [3, "lilpa0309", "릴파♥", "#000080"], [4, "cotton1217", "주르르_", "#FF008C"], [5, "gosegu2", "고세구!", "#467EC6"], [6, "viichan6", "_비챤", "#95C100"]];
                         let bulkData: any = [];
                         default_data.forEach(item => {
                             item.unshift(email);
