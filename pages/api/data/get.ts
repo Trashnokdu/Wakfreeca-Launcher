@@ -18,7 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method == "GET"){
         pool.getConnection(async function(err:any, connection: any) {
             if (err) {
-                console.error('Error connecting: ' + err.stack);
                 return res.status(500).send("500 Internal Server Error");
             }
             const session = await getSession({ req })
@@ -32,14 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
                 connection.query('SELECT email from user WHERE email=?', [email], (error:any, rows:string[]) => {
                     if(error){
-                        console.log(error)
                         return res.status(500).send("500 Internal Server Error")
                     }
                     if(rows.length === 0){
                         connection.query('INSERT INTO user VALUES (?)', [email], (error:any, rows:string[]) => {
-                            if (error) {
-                                console.log(error);
-                            }
                         });
                         const default_data = [[0, "ecvhao", "우왁굳", "#164532"], [1, "inehine", "아이네♪", "#8A2BE2"], [2, "jingburger1", "징버거☆", "#F0A957"], [3, "lilpa0309", "릴파♥", "#000080"], [4, "cotton1217", "주르르_", "#FF008C"], [5, "gosegu2", "고세구!", "#467EC6"], [6, "viichan6", "_비챤", "#95C100"]];
                         let bulkData: any = [];
@@ -51,15 +46,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         let flatData = [].concat(...bulkData);
                         let bulkInsertQuery = `INSERT INTO data VALUES ${placeholders}`;
                         connection.query(bulkInsertQuery, flatData, (error:any, rows:string[]) => {
-                            if (error) {
-                                console.log(error);
-                            }
+
                         });
                         connection.commit()
                         connection.query('SELECT * from data WHERE email=?', [email], (error:any, rows:string[]) => {
-                            if (error) {
-                                console.log(error);
-                            }
+
                             const result = rows.map((data:any) => {
                                 return {
                                     "sequence": data.sequence,
@@ -74,9 +65,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                     else{
                         connection.query('SELECT * from data WHERE email=?', [email], (error:any, rows:string[]) => {
-                            if (error) {
-                                console.log(error);
-                            }
                             const result = rows.map((data:any) => {
                                 return {
                                     "sequence": data.sequence,
