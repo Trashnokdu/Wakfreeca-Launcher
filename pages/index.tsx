@@ -38,7 +38,8 @@ const getFollow = async (id: string) => {
     const response = await axios({
         url: `https://bjapi.afreecatv.com/api/${id}/station`,
     })
-    return (response.data.station.upd.fan_cnt / 10000).toFixed(1) + '만';
+    const fanCount = response.data.station.upd.fan_cnt;
+    return fanCount < 10000 ? fanCount : (fanCount / 10000).toFixed(1) + '만';
   }
   catch{
     return alert("알수없는 오류가 발생하였습니다")
@@ -97,12 +98,12 @@ export default function Home() {
 }, []);
 
   function LoginOrSetting(){
-    // if(windowWidth < 768){
+    if(windowWidth < 768){
       Login ? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)
-    // }
-    // else{
-    //   Login ? setshowPCAlert(true) : setShowLoginModal(true)
-    // }
+    }
+    else{
+      Login ? setshowPCAlert(true) : setShowLoginModal(true)
+    }
   }
 
   function testisinlist(list: any, id: string){
