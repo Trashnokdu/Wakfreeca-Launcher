@@ -84,7 +84,7 @@ const ListView = (props: any) => {
               <Droppable droppableId={columnId} key={columnId}>
                 {(provided, snapshot) => {
                   return (
-                    <div {...provided.droppableProps} ref={provided.innerRef} style={{paddingBottom: "10svh"}}>
+                    <div className='list_m' {...provided.droppableProps} ref={provided.innerRef} style={{paddingBottom: "10svh"}}>
                       {column.items.map((item:any, index:any) => {
                         return (
                           <Draggable draggableId={item.id} index={index} key={item.id}>
@@ -118,7 +118,7 @@ const ListView = (props: any) => {
         </DragDropContext>
     )
     return (
-        <div style={{fontSize: "0.875rem"}}>
+        <div className='list_m' style={{fontSize: "0.875rem"}}>
             {props.sortedChData && props.sortedChData.map((item: data_type) => (
               <div className='list_con' key={item.sequence} onClick={() => openlive(item.id)}>
                 <div style={{display: "flex",}} >

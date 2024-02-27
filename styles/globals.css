@@ -171,7 +171,9 @@ input:focus {outline:none;}
   justify-content: space-between;
 }
 
-
+.list_m{
+  width: 100vw;
+}
 @media screen and (max-width: 360px) {
   .button-container {
     justify-content: space-around;
@@ -227,4 +229,33 @@ input:focus {outline:none;}
 #light{
   background-color: #F2F2F7;
   color: black;
+}
+
+@media screen and (min-width: 768px) {
+  .modal-button{
+    width: 100%;
+    height: 3.5rem;
+  }
+  .modal-content {
+    padding: 1rem;
+    border-radius: 32px; /* 수정된 부분 */
+    position: fixed;
+    height: 13rem;
+    bottom: 50svh;
+    box-sizing: border-box;
+    width: 22.5rem;
+  }
+  .list_con{
+    width: 100%; /* 수정된 부분 */
+    height: 3.5rem;
+    box-sizing: border-box; /* 추가된 부분 */
+  }
+  .list_m{
+    width: 40.5rem;
+    display: grid;
+    column-gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+    justify-items: center;
+  }
 }
