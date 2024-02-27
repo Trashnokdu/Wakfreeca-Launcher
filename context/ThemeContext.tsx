@@ -13,8 +13,8 @@ export function ThemeProvider({children}: PropsWithChildren<{}>){
     )
 }
 
-export function useThemeContext(){
-    const context = useContext(ThemeContext);
-    if(!context) throw new Error("useThemeContext는 항상 ThemeProvider 내에서 사용되어야 합니다.")
-    return context;
-}
+// export function useThemeContext(){
+//     const context = useContext(ThemeContext);
+//     if(!context) throw new Error("useThemeContext는 항상 ThemeProvider 내에서 사용되어야 합니다.")
+//     return context;
+// }
