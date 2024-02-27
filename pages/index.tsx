@@ -31,7 +31,7 @@ function getchData(setChData: any){
     url: "/api/data/get",
   })
   .then((response) => setChData(response.data))
-  .catch((error) => console.log(error))
+  .catch()
 }
 const getFollow = async (id: string) => {
   try{
@@ -153,7 +153,6 @@ export default function Home() {
   }
   useEffect(() => {
     if(isediting && !isSetting){
-        console.log("edit end")
         const fetchFollows = async () => {
           const newFollows: any = {};
 
@@ -172,7 +171,6 @@ export default function Home() {
     }
     if(!isediting && isSetting){
         setIsediting(true)
-        return console.log("edit start")
     }
 }, [isSetting])
   useEffect(() => {
@@ -215,7 +213,6 @@ export default function Home() {
           addItem();
           setLogin(false)
           setIsLoding(false)
-          console.info('[LoginCheck]addSuccess')
         } else if(item === 'false'){
           if(session){
             axios({
@@ -232,7 +229,6 @@ export default function Home() {
           }
           setLogin(false)
           setIsLoding(false)
-          return console.log("you need login to google.")
         }
         else{
           if(!session){
@@ -255,7 +251,6 @@ export default function Home() {
     }, [status])
     useEffect(()=>{
       sortedChData = chData.sort((a: data_type, b: data_type) => a.sequence - b.sequence);
-      console.log(sortedChData)
     }, [chData])
     if(isLoding){
       return (
