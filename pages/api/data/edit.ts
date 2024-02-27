@@ -95,7 +95,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 connection.commit()
                 connection.query('SELECT * from data WHERE email=?', [email], (error:any, rows:string[]) => {
-
                     const result = rows.map((data:any) => {
                         return {
                             "sequence": data.sequence,
