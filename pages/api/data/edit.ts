@@ -47,7 +47,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const email = session?.user?.email
         pool.getConnection(async function(err:any, connection: any) {
             if (err) {
-                console.error('Error connecting: ' + err.stack);
                 return res.status(500).send("500 Internal Server Error");
             }
             try{
@@ -60,9 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
             if(data.length == 0){
                 connection.query("DELETE from data WHERE email=?", [email], (error:any) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                 })
                 return res.send([])
             }
@@ -91,20 +88,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 }
                 connection.query("DELETE from data WHERE email=?", [email], (error:any) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                 })
                 connection.query("INSERT INTO data (email, sequence, id, name, color) VALUES ?", [bulkData], (error:any, rows:string[]) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                 });
                 connection.commit()
                 connection.query('SELECT * from data WHERE email=?', [email], (error:any, rows:string[]) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                     const result = rows.map((data:any) => {
                         return {
                             "sequence": data.sequence,
