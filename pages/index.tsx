@@ -78,12 +78,33 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showDelteModal, setshowDelteModal] = useState(false)
+  const [showPCAlert, setshowPCAlert] = useState(false)
   const [showColorpicker, setShowColorpicker] = useState(false)
   const [isSetting, setIsSetting] = useState(false)
   const { data: session, status } = useSession();
   const ThemeContext = createContext("null");
   const [setTheme, theme] = useState("light")
   const [follows, setFollows] = useState<any>({});
+  const [windowWidth, setWindowWidth] = useState(Number);
+
+  useEffect(() => {
+    function handleResize() {
+        setWindowWidth(window.innerWidth);
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+  function LoginOrSetting(){
+    // if(windowWidth < 768){
+      Login ? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)
+    // }
+    // else{
+    //   Login ? setshowPCAlert(true) : setShowLoginModal(true)
+    // }
+  }
+
   function testisinlist(list: any, id: string){
     return list.some(function (item: any) {
         return item.id === id;
@@ -255,9 +276,9 @@ export default function Home() {
       </Head>
       <header className="container Top autotextcolor">
         <span style={{marginLeft:"1rem", fontSize: '0.75rem', fontWeight: '700', left: "50"}}><p style={{margin: 0, fontWeight: '700'}}>WAKFREECA</p>LAUNCHER</span>
-        <button style={{marginLeft: "auto", marginRight: "1rem", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {Login ? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)}}>{isSetting? "check_circle": "settings"}</button>
+        <button style={{marginLeft: "auto", marginRight: "1rem", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {LoginOrSetting()}}>{isSetting? "check_circle": "settings"}</button>
       </header>
-      <main style={{margin: "1rem"}}>
+      <main style={{margin: "1rem", display: "flex", justifyContent: "center"}}>
         <ListView setName={setName} setshowDelteModal={setshowDelteModal} chData={chData} isSetting={isSetting} setIsediting={setIsediting} setChData={setChData} isediting={isediting} setShowModal={setShowModal} sortedChData={sortedChData} follows={follows} setIsdataediting={setIsdataediting} setColor={setColor} setId={setId}></ListView>
       </main>
 
@@ -316,12 +337,21 @@ export default function Home() {
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>Google로 로그인해서 설정을 저장하세요</span>
           </div>
-            <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none", marginTop: "27px"}} onClick={() => signIn('google')}>
-                <img style={{marginLeft:"4.444444444444445%"}} src="google.svg" alt="" />
+            <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none", marginTop: "1.75rem"}} onClick={() => signIn('google')}>
+                <img style={{marginLeft:"1rem"}} src="google.svg" alt="" />
                 <span className="autotextcolor" style={{marginLeft: "auto", marginRight: "20px"}}>Google로 로그인</span>
             </button>
-          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
-          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
+          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '3rem', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
+          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '3rem', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
+        </div>
+      </div>
+      {/* 알림 모달 */}
+      <div className={showPCAlert ? 'modal_3 active' : 'modal_3'} onClick={() => {setshowPCAlert(false)}}>
+        <div className="modal-content" onClick={e => e.stopPropagation()} style={{height: "9.5rem", display: "revert", justifyContent: 'center', alignItems: 'center', textAlign: "center", justifyItems: "center"}}>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>설정 변경은 모바일에서 진행해주세요</span>
+          </div>
+          <button className="modal-bottom-button autotextcolor" style={{marginBottom: "1rem", fontSize: "0.875rem", height: '3rem', float: "left", padding: "0px", width: "91.1111111111111%", position: "absolute", left: "1rem", bottom: 0}} onClick={() => {setshowPCAlert(false)}}>확인</button>
         </div>
       </div>
       {/* 삭제 모달 */}
