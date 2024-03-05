@@ -21,6 +21,7 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .container {
   display: flex;
   align-items: center;
@@ -108,7 +109,7 @@ input:focus {outline:none;}
   border-radius: 16px;
   border: none;
   background-color: white;
-  margin-bottom: 8px
+  margin-bottom: 1rem
 }
 .modal.active {
   opacity: 1;
