@@ -280,7 +280,6 @@ export default function Home() {
 
 
 
-
       {/* 이하 모달 모음 */}
 
       {/* 추가, 수정 모달 */}
@@ -301,8 +300,8 @@ export default function Home() {
             <span style={{marginLeft: "auto", marginRight: "16px", background: "none", backgroundColor: color, width: "24px", height: "24px", borderRadius: "32px"}} className="autooutlinecolor"></span>
           </button>
           <div style={{ width: '100%', height: "100%", display: 'flex', justifyContent: 'space-between'}}>
-            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', float: "left"}} onClick={() => {setShowModal(false); setTimeout(() => {setId(""); setColor("#164532"); setIsdataediting(false)}, 300)}}>쓰읍...</button>
-            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, float: "left", marginLeft: "8px", color: textColor}} onClick={save}>킹애</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', float: "left"}} onClick={() => {setShowModal(false); setTimeout(() => {setId(""); setColor("#164532"); setIsdataediting(false)}, 300)}}>취소</button>
+            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, float: "left", marginLeft: "8px", color: textColor}} onClick={save}>저장</button>
           </div>
         </div>
       </div>
@@ -322,8 +321,8 @@ export default function Home() {
         </div>
         <div className="modal-button container" style={{fontSize: "0.875rem", height: "11.865%", marginTop: "8px"}}><input style={{paddingLeft:"18px", width: "100%", height: "100%", border: "none", background: "none", paddingTop: "0px", paddingBottom: "0px", flex: "1"}} className="autotextcolor" value={color} onChange={handleChange}></input></div>
         <div style={{ width: '100%', height: "100%", display: 'flex', justifyContent: 'space-between'}}>
-            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '10.17%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setColor(oldColor); setShowColorpicker(false)}}>쓰읍...</button>
-            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '10.17%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "8px", color: textColor, padding: "0px"}} onClick={() => setShowColorpicker(false)}>킹애</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '10.17%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setColor(oldColor); setShowColorpicker(false)}}>취소</button>
+            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '10.17%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "8px", color: textColor, padding: "0px"}} onClick={() => setShowColorpicker(false)}>저장</button>
         </div>
         </div>
       </div>
@@ -337,8 +336,9 @@ export default function Home() {
                 <img style={{marginLeft:"1rem"}} src="google.svg" alt="" />
                 <span className="autotextcolor" style={{marginLeft: "auto", marginRight: "20px"}}>Google로 로그인</span>
             </button>
-          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '3rem', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
-          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '3rem', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
+          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '3rem', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>취소</button>
+          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '3rem', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}} onClick={() => {setShowLoginModal(false)}}>확인</button>
+          <a href="/privacypolicy.html" style={{fontSize: "0.875rem", color: "#999999", textDecoration: "none"}}>개인정보처리방침</a>
         </div>
       </div>
       {/* 알림 모달 */}
@@ -354,7 +354,7 @@ export default function Home() {
       <div className={showDelteModal ? 'modal_3 active' : 'modal_3'} onClick={() => {setshowDelteModal(false); setName(""); setId(""); setColor("#164532")}}>
         <div className="modal-content" onClick={e => e.stopPropagation()} style={{justifyContent: 'space-between', alignItems: 'center', textAlign: "center"}}>
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>이 바로가기를 관보내실건가요?</span>
+            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>이 바로가기를 삭제하실건가요?</span>
           </div>
           <div className='list_con' style={{marginTop: "27px"}}>
                 <div style={{display: "flex",}} >
@@ -373,7 +373,7 @@ export default function Home() {
                 </div>
             </div>
           <div style={{display: "flex", justifyContent: "space-between", height: "3rem"}}>
-            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '100%', float: "left", padding: "0px",}} onClick={() => {setshowDelteModal(false)}}>쓰읍...</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '100%', float: "left", padding: "0px",}} onClick={() => {setshowDelteModal(false)}}>취소</button>
             <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '100%', backgroundColor: color, float: "left", marginLeft: "8px", color: textColor, padding: "0px"}} onClick={del}>-관-</button>
           </div>
         </div>
@@ -381,9 +381,3 @@ export default function Home() {
     </>
   )
 }
-  
-/*
-  킹아
-*/
-/** 이제 페이지 번역 안뜰거빈다 어 global.css좀 손보고 올게요
-*/
