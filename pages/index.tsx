@@ -207,6 +207,11 @@ export default function Home() {
     setTextcolor(getTextColor(color))
   }, [color])
   useEffect(() => {
+    if(windowWidth > 768){
+      setIsSetting(false)
+    }
+  }, [windowWidth])
+  useEffect(() => {
     if(status != "loading"){
         const item: any = window.localStorage.getItem('isLoggedIn')
         if(!item){
