@@ -241,7 +241,7 @@ input:focus {outline:none;}
     padding: 1rem;
     border-radius: 32px; /* 수정된 부분 */
     position: fixed;
-    height: 13rem;
+    height: 15.5rem;
     bottom: 50svh;
     box-sizing: border-box;
     width: 22.5rem;
