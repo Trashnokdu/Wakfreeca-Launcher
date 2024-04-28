@@ -6,7 +6,7 @@ const clientId = `${process.env.GOOGLE_CLIENT_ID}`;
 const clientSecret = `${process.env.GOOGLE_CLIENT_SECRET}`
 const secret = `${process.env.SECRET}`
 
-const authOptions = { 
+export const authOptions = { 
   providers: [
     Google({
       clientId: clientId || "",

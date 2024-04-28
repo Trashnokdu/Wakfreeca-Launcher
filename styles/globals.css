@@ -1,9 +1,9 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css");
+@import url("https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.2/packages/wanted-sans/fonts/webfonts/variable/complete/WantedSansVariable.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
 *{
   font-weight: 500;
-  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-family: "Wanted Sans Variable", "Wanted Sans", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   user-select: none;
   box-sizing: border-box;
 }
@@ -21,6 +21,7 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .container {
   display: flex;
   align-items: center;
@@ -108,7 +109,7 @@ input:focus {outline:none;}
   border-radius: 16px;
   border: none;
   background-color: white;
-  margin-bottom: 8px
+  margin-bottom: 1rem
 }
 .modal.active {
   opacity: 1;
@@ -171,7 +172,9 @@ input:focus {outline:none;}
   justify-content: space-between;
 }
 
-
+.list_m{
+  width: 100vw;
+}
 @media screen and (max-width: 360px) {
   .button-container {
     justify-content: space-around;
@@ -227,4 +230,33 @@ input:focus {outline:none;}
 #light{
   background-color: #F2F2F7;
   color: black;
+}
+
+@media screen and (min-width: 768px) {
+  .modal-button{
+    width: 100%;
+    height: 3.5rem;
+  }
+  .modal-content {
+    padding: 1rem;
+    border-radius: 32px; /* 수정된 부분 */
+    position: fixed;
+    height: 15.5rem;
+    bottom: 50svh;
+    box-sizing: border-box;
+    width: 22.5rem;
+  }
+  .list_con{
+    width: 100%; /* 수정된 부분 */
+    height: 3.5rem;
+    box-sizing: border-box; /* 추가된 부분 */
+  }
+  .list_m{
+    width: 40.5rem;
+    display: grid;
+    column-gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+    justify-items: center;
+  }
 }

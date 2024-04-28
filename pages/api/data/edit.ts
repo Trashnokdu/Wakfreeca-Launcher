@@ -1,7 +1,9 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from "next-auth/next"
 const mysql = require("mysql")
 require('dotenv').config();
+import { authOptions } from "../auth/[...nextauth]"
 const secret = process.env.Secret;
 const pool = mysql.createPool({
     host : process.env.mysql_URL,
@@ -33,18 +35,21 @@ function isValidList(list: ListItem[]): boolean {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method == "POST"){
+        const session = await getServerSession(req, res, authOptions);
+
+        if(!session){
+            res.status(401).send("401 Unauthorized")
+        }
         const data = req.body.data
         if(!data){
             return res.status(400).send("400 Bad Request")
         }
-        var email: string | null | undefined
+        const email = session?.user?.email
         pool.getConnection(async function(err:any, connection: any) {
             if (err) {
-                console.error('Error connecting: ' + err.stack);
                 return res.status(500).send("500 Internal Server Error");
             }
             try{
-                email = req.body.email
                 if(!email){
                     return res.status(500).send("500 Internal Server Error")
                 }
@@ -54,9 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
             if(data.length == 0){
                 connection.query("DELETE from data WHERE email=?", [email], (error:any) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                 })
                 return res.send([])
             }
@@ -85,20 +88,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 }
                 connection.query("DELETE from data WHERE email=?", [email], (error:any) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                 })
                 connection.query("INSERT INTO data (email, sequence, id, name, color) VALUES ?", [bulkData], (error:any, rows:string[]) => {
-                    if (error) {
-                        console.log(error);
-                    }
+
                 });
                 connection.commit()
                 connection.query('SELECT * from data WHERE email=?', [email], (error:any, rows:string[]) => {
-                    if (error) {
-                        console.log(error);
-                    }
                     const result = rows.map((data:any) => {
                         return {
                             "sequence": data.sequence,

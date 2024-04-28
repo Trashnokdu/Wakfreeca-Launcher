@@ -31,14 +31,15 @@ function getchData(setChData: any){
     url: "/api/data/get",
   })
   .then((response) => setChData(response.data))
-  .catch((error) => console.log(error))
+  .catch()
 }
 const getFollow = async (id: string) => {
   try{
     const response = await axios({
         url: `https://bjapi.afreecatv.com/api/${id}/station`,
     })
-    return (response.data.station.upd.fan_cnt / 10000).toFixed(1) + '만';
+    const fanCount = response.data.station.upd.fan_cnt;
+    return fanCount < 10000 ? fanCount : (fanCount / 10000).toFixed(1) + '만';
   }
   catch{
     return alert("알수없는 오류가 발생하였습니다")
@@ -78,12 +79,33 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showDelteModal, setshowDelteModal] = useState(false)
+  const [showPCAlert, setshowPCAlert] = useState(false)
   const [showColorpicker, setShowColorpicker] = useState(false)
   const [isSetting, setIsSetting] = useState(false)
   const { data: session, status } = useSession();
   const ThemeContext = createContext("null");
   const [setTheme, theme] = useState("light")
   const [follows, setFollows] = useState<any>({});
+  const [windowWidth, setWindowWidth] = useState(Number);
+
+  useEffect(() => {
+    function handleResize() {
+        setWindowWidth(window.innerWidth);
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+  function LoginOrSetting(){
+    if(windowWidth < 768){
+      Login ? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)
+    }
+    else{
+      Login ? setshowPCAlert(true) : setShowLoginModal(true)
+    }
+  }
+
   function testisinlist(list: any, id: string){
     return list.some(function (item: any) {
         return item.id === id;
@@ -132,7 +154,6 @@ export default function Home() {
   }
   useEffect(() => {
     if(isediting && !isSetting){
-        console.log("edit end")
         const fetchFollows = async () => {
           const newFollows: any = {};
 
@@ -151,7 +172,6 @@ export default function Home() {
     }
     if(!isediting && isSetting){
         setIsediting(true)
-        return console.log("edit start")
     }
 }, [isSetting])
   useEffect(() => {
@@ -187,6 +207,11 @@ export default function Home() {
     setTextcolor(getTextColor(color))
   }, [color])
   useEffect(() => {
+    if(windowWidth > 768){
+      setIsSetting(false)
+    }
+  }, [windowWidth])
+  useEffect(() => {
     if(status != "loading"){
         const item: any = window.localStorage.getItem('isLoggedIn')
         if(!item){
@@ -194,7 +219,6 @@ export default function Home() {
           addItem();
           setLogin(false)
           setIsLoding(false)
-          console.info('[LoginCheck]addSuccess')
         } else if(item === 'false'){
           if(session){
             axios({
@@ -211,7 +235,6 @@ export default function Home() {
           }
           setLogin(false)
           setIsLoding(false)
-          return console.log("you need login to google.")
         }
         else{
           if(!session){
@@ -234,7 +257,6 @@ export default function Home() {
     }, [status])
     useEffect(()=>{
       sortedChData = chData.sort((a: data_type, b: data_type) => a.sequence - b.sequence);
-      console.log(sortedChData)
     }, [chData])
     if(isLoding){
       return (
@@ -255,12 +277,11 @@ export default function Home() {
       </Head>
       <header className="container Top autotextcolor">
         <span style={{marginLeft:"1rem", fontSize: '0.75rem', fontWeight: '700', left: "50"}}><p style={{margin: 0, fontWeight: '700'}}>WAKFREECA</p>LAUNCHER</span>
-        <button style={{marginLeft: "auto", marginRight: "1rem", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {Login ? isSetting? setIsSetting(false) : setIsSetting(true) : setShowLoginModal(true)}}>{isSetting? "check_circle": "settings"}</button>
+        <button style={{marginLeft: "auto", marginRight: "1rem", background: "none", border: "none", color: "#999999"}} className="material-symbols-rounded"  onClick={() => {LoginOrSetting()}}>{isSetting? <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#999999" d="m424-408-86-86q-11-11-28-11t-28 11q-11 11-11 28t11 28l114 114q12 12 28 12t28-12l226-226q11-11 11-28t-11-28q-11-11-28-11t-28 11L424-408Zm56 328q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>: <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#999999" d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm7-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>}</button>
       </header>
-      <main style={{margin: "1rem"}}>
+      <main style={{margin: "1rem", display: "flex", justifyContent: "center"}}>
         <ListView setName={setName} setshowDelteModal={setshowDelteModal} chData={chData} isSetting={isSetting} setIsediting={setIsediting} setChData={setChData} isediting={isediting} setShowModal={setShowModal} sortedChData={sortedChData} follows={follows} setIsdataediting={setIsdataediting} setColor={setColor} setId={setId}></ListView>
       </main>
-
 
 
 
@@ -284,8 +305,8 @@ export default function Home() {
             <span style={{marginLeft: "auto", marginRight: "16px", background: "none", backgroundColor: color, width: "24px", height: "24px", borderRadius: "32px"}} className="autooutlinecolor"></span>
           </button>
           <div style={{ width: '100%', height: "100%", display: 'flex', justifyContent: 'space-between'}}>
-            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', float: "left"}} onClick={() => {setShowModal(false); setTimeout(() => {setId(""); setColor("#164532"); setIsdataediting(false)}, 300)}}>쓰읍...</button>
-            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, float: "left", marginLeft: "8px", color: textColor}} onClick={save}>킹애</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', float: "left"}} onClick={() => {setShowModal(false); setTimeout(() => {setId(""); setColor("#164532"); setIsdataediting(false)}, 300)}}>취소</button>
+            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, float: "left", marginLeft: "8px", color: textColor}} onClick={save}>저장</button>
           </div>
         </div>
       </div>
@@ -305,8 +326,8 @@ export default function Home() {
         </div>
         <div className="modal-button container" style={{fontSize: "0.875rem", height: "11.865%", marginTop: "8px"}}><input style={{paddingLeft:"18px", width: "100%", height: "100%", border: "none", background: "none", paddingTop: "0px", paddingBottom: "0px", flex: "1"}} className="autotextcolor" value={color} onChange={handleChange}></input></div>
         <div style={{ width: '100%', height: "100%", display: 'flex', justifyContent: 'space-between'}}>
-            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '10.17%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setColor(oldColor); setShowColorpicker(false)}}>쓰읍...</button>
-            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '10.17%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "8px", color: textColor, padding: "0px"}} onClick={() => setShowColorpicker(false)}>킹애</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '10.17%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setColor(oldColor); setShowColorpicker(false)}}>취소</button>
+            <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '10.17%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "8px", color: textColor, padding: "0px"}} onClick={() => setShowColorpicker(false)}>저장</button>
         </div>
         </div>
       </div>
@@ -316,19 +337,29 @@ export default function Home() {
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>Google로 로그인해서 설정을 저장하세요</span>
           </div>
-            <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none", marginTop: "27px"}} onClick={() => signIn('google')}>
-                <img style={{marginLeft:"4.444444444444445%"}} src="google.svg" alt="" />
+            <button className="modal-button container" style={{fontSize: "0.875rem", paddingInline: "none", marginTop: "1.75rem"}} onClick={() => signIn('google')}>
+                <img style={{marginLeft:"1rem"}} src="google.svg" alt="" />
                 <span className="autotextcolor" style={{marginLeft: "auto", marginRight: "20px"}}>Google로 로그인</span>
             </button>
-          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '21.43%', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>쓰읍...</button>
-          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '21.43%', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}}>두개재</button>
+          <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '3rem', width: '48.91%', float: "left", padding: "0px",}} onClick={() => {setShowLoginModal(false)}}>취소</button>
+          <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '3rem', backgroundColor: color, width: '48.91%', float: "left", marginLeft: "2.18%", color: textColor, padding: "0px"}} onClick={() => {setShowLoginModal(false)}}>확인</button>
+          <a href="/privacypolicy.html" style={{fontSize: "0.875rem", color: "#999999", textDecoration: "none"}}>개인정보처리방침</a>
+        </div>
+      </div>
+      {/* 알림 모달 */}
+      <div className={showPCAlert ? 'modal_3 active' : 'modal_3'} onClick={() => {setshowPCAlert(false)}}>
+        <div className="modal-content" onClick={e => e.stopPropagation()} style={{height: "9.5rem", display: "revert", justifyContent: 'center', alignItems: 'center', textAlign: "center", justifyItems: "center"}}>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>설정 변경은 모바일에서 진행해주세요</span>
+          </div>
+          <button className="modal-bottom-button autotextcolor" style={{marginBottom: "1rem", fontSize: "0.875rem", height: '3rem', float: "left", padding: "0px", width: "91.1111111111111%", position: "absolute", left: "1rem", bottom: 0}} onClick={() => {setshowPCAlert(false)}}>확인</button>
         </div>
       </div>
       {/* 삭제 모달 */}
       <div className={showDelteModal ? 'modal_3 active' : 'modal_3'} onClick={() => {setshowDelteModal(false); setName(""); setId(""); setColor("#164532")}}>
         <div className="modal-content" onClick={e => e.stopPropagation()} style={{justifyContent: 'space-between', alignItems: 'center', textAlign: "center"}}>
           <div style={{display: 'flex', flexDirection: 'column'}}>
-            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>이 바로가기를 관보내실건가요?</span>
+            <span className="autotextcolor" style={{fontSize: "0.875rem", paddingTop: "24px"}}>이 바로가기를 삭제하실건가요?</span>
           </div>
           <div className='list_con' style={{marginTop: "27px"}}>
                 <div style={{display: "flex",}} >
@@ -336,18 +367,18 @@ export default function Home() {
                     <span>
                     <span style={{color: color}}>{name}</span> <span style={{color: "#999999"}}>({id})</span><br/>
                        <div style={{marginTop: "0.25rem", display: "flex", alignItems: "center", color: "#999999"}}>
-                           <span className="material-symbols-rounded infill" style={{fontSize: "1rem"}}>stars</span>
-                           <span style={{fontSize: "0.75rem", marginLeft: "0.1875rem"}}>{follows[id]}</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"><path fill="#999999" d="m480-362 111 84q12 8 24 .5t7-21.5l-42-139 109-78q12-9 7-22.5T677-552H544l-45-146q-5-14-19-14t-19 14l-45 146H283q-14 0-19 13.5t7 22.5l109 78-42 139q-5 14 7 21.5t24-.5l111-84Zm0 282q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                          <span style={{fontSize: "0.75rem", marginLeft: "0.1875rem"}}>{follows[id]}</span>
                        </div>
                     </span>
                 </div>
                 <div style={{display: "flex"}}>
-                    <button className='material-symbols-rounded' style={{alignSelf: 'center', border: "none", background: "none", color: color, fontSize: "1.25rem", width: "2.5rem", height: "100%"}}>play_circle</button>
-                    <button className='material-symbols-rounded' style={{alignSelf: 'center', border: "none", background: "none", color: color, fontSize: "1.25rem", width: "2.5rem", height: "100%"}}>account_circle</button>
+                    <button style={{alignSelf: 'center', border: "none", background: "none", color: color, fontSize: "1.25rem", width: "2.5rem", height: "100%"}}><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path fill={color} d="m426-330 195-125q14-9 14-25t-14-25L426-630q-15-10-30.5-1.5T380-605v250q0 18 15.5 26.5T426-330Zm54 250q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></button>
+                    <button style={{alignSelf: 'center', border: "none", background: "none", color: color, fontSize: "1.25rem", width: "2.5rem", height: "100%"}}><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path fill={color} d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg></button>
                 </div>
             </div>
           <div style={{display: "flex", justifyContent: "space-between", height: "3rem"}}>
-            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '100%', float: "left", padding: "0px",}} onClick={() => {setshowDelteModal(false)}}>쓰읍...</button>
+            <button className="modal-bottom-button autotextcolor" style={{fontSize: "0.875rem", height: '100%', float: "left", padding: "0px",}} onClick={() => {setshowDelteModal(false)}}>취소</button>
             <button className="modal-bottom-button" style={{fontSize: "0.875rem", height: '100%', backgroundColor: color, float: "left", marginLeft: "8px", color: textColor, padding: "0px"}} onClick={del}>-관-</button>
           </div>
         </div>
@@ -355,9 +386,3 @@ export default function Home() {
     </>
   )
 }
-  
-/*
-  킹아
-*/
-/** 이제 페이지 번역 안뜰거빈다 어 global.css좀 손보고 올게요
-*/
