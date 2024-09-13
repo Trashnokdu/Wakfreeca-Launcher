@@ -1053,9 +1053,9 @@ react-beautiful-dnd@^13.1.1:
     use-memo-one "^1.1.1"
 
 react-color-palette@^7.1.0:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/react-color-palette/-/react-color-palette-7.1.1.tgz#939cffb4b1295c4f4140437a3805e64bfd5ff3e9"
-  integrity sha512-fBmTRWmTCrH08yZwU+5647pUKABRM6h4TS/43Q/mt/TLH1hyTfWopCc6wm2L9IoynPcOT7SaOm3Xmdz+goFEDw==
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/react-color-palette/-/react-color-palette-7.3.0.tgz#2229230b0513ea0bb303c74319f1840c6f0608e0"
+  integrity sha512-GCgz+XEcbyFkq5wVvrPiXp8mUnOI3oObtmOtsZBCpDXgzHcDCJdssW8lTtVXbUqodo6pOw6pwYQRlXpi/ekkzQ==
 
 react-color@^2.19.3:
   version "2.19.3"
